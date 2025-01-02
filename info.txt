@@ -1,0 +1,5 @@
+To find the ID for your "Featured" gallery:
+
+Navigate to: https://www.deviantart.com/swanamii/gallery
+Hover over the "Featured" link under "Gallery"
+You can see the ID in the URL (https://www.deviantart.com/swanamii/gallery/16656/featured)
