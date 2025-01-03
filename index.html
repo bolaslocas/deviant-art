@@ -1,113 +1,26 @@
 <!DOCTYPE html>
-<html oncontextmenu="return false;">
+<html data-bs-theme="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <link rel="icon" href="imgs/download-square.svg" sizes="any" type="image/svg+xml">
   <title>Deviantart Gallery Downloader</title>
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/neutron.css" rel="stylesheet">
   <link rel="stylesheet" href="css/lightbox.min.css">
-
-  <style>
-    #dropdown-checkbox {
-      display: none;
-    }
-
-    #dropdown-checkbox:checked+.dropdown-menu {
-      display: block;
-    }
-
-    progress {
-      border: 1px solid #444;
-      border-radius: 4px;
-      width: 100%;
-      height: 10px;
-      /* background-color: #444; */
-      background-color: #303030;
-      accent-color: coral;
-      transition-property: ease;
-    }
-
-    .image-container {
-      position: relative;
-    }
-
-    .image-container a {
-      display: block;
-    }
-
-    .copy-link-btn {
-      display: block;
-      border: 0;
-      color: #fff;
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      font-size: 12px;
-      padding: 1px 5px;
-      background-color: rgba(0,0,0,0.5);
-      border-radius: 5px;
-    }
-
-    .message {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: #000000a3;
-      color: #fff;
-      padding: 5px 10px;
-      line-height: 1.5;
-      border-radius: 5px;
-      transition: .6s;
-      opacity: 0;
-      visibility: hidden;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="d-flex flex-column" oncontextmenu="return false;">
-
-  <!-- Title Bar -->
-  <header>
-    <span class='title-bar' onmousedown='neutron.DragTitleBar()'>Deviantart Gallery Downloader</span>
-    <span class='title-btn' onclick='neutron.Minimize()'>
-      <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-minus'>
-        <line x1='5' y1='12' x2='19' y2='12'></line>
-      </svg>
-    </span>
-    <span class='title-btn title-btn-maximize' onclick='neutron.Maximize()'>
-      <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-square'>
-        <rect x='3' y='3' width='18' height='18' rx='2' ry='2'></rect>
-      </svg>
-    </span>
-    <span class='title-btn title-btn-restore' onclick='neutron.Maximize()'>
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy" style="transform: scale(-1, 1) translateY(1px);">
-        <rect x="5" y="5" width="13" height="13" rx="2" ry="2" />
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
-    </span>
-    <span class='title-btn title-btn-close' onclick='neutron.Close()'>
-      <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-x'>
-        <line x1='18' y1='6' x2='6' y2='18'></line>
-        <line x1='6' y1='6' x2='18' y2='18'></line>
-      </svg>
-    </span>
-  </header>
-  <!-- End Title Bar -->
-  <!-- Window Contents -->
+<body class="d-flex flex-column">
 
   <div class='main'>
     <div class='scrollable-container'>
       <div class='scrollable'>
         <div class="page-content">
-          <!-- Start Main Section -->
-
           <div class="container">
-
-            <h1 class="h3 mt-2">Deviantart Gallery Downloader</h1>
+            <h1 class="h3 mt-4">Deviantart Gallery Viewer & <span style="text-decoration: line-through;">Downloader</span><sup style="margin-left: 5px; opacity: 0.5;font-size: 16px;">not yet</sup></h1>
             <p class="text-white-50"></p>
             <form onsubmit="Search(event)" id="search-form">
               <div class="row">
@@ -121,7 +34,7 @@
                 <div class="col-2">
                   <div class="form-group">
                     <label for="search-limit" class="h5">Limit</label>
-                    <select class="custom-select" name="searchLimit" id="search-limit">
+                    <select class="form-select" name="searchLimit" id="search-limit">
                       <option value="10" selected>10</option>
                       <option value="20">20</option>
                       <option value="30">30</option>
@@ -132,7 +45,7 @@
                   </div>
                 </div>
               </div>
-              <div class="mb-2">
+              <div class="mt-2 mb-3">
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" type="radio" name="searchType" id="searchByTerm" checked>
                   <label class="form-check-label" for="searchByTerm">
@@ -165,197 +78,74 @@
                 </div>
               </div>
               <a class="btn btn-primary btn-sm" onclick="Search()">Search</a>
-              <!-- <a class="btn btn-primary btn-sm" onclick="ahk.PasteClipboard(event)">1. Paste Clipboard</a>
-              <a class="btn btn-primary btn-sm" onclick="ahk.GetCourseLessons(event)">2. Get Course List</a>
-              <a class="btn btn-primary btn-sm" onclick="ahk.DownloadDir(event)">3. Select Destination Directory</a>
-              <a class="btn btn-success btn-sm" onclick="ahk.DownloadCourse(event)">4. Start Download</a>
-              <div class="dropdown d-inline-block">
-                <label for="dropdown-checkbox" class="btn btn-sm btn-secondary dropdown-toggle mb-0"></label>
-                <input type="checkbox" id="dropdown-checkbox" name="dropdown-checkbox">
-                <div class="dropdown-menu py-1">
-                  <a class="dropdown-item px-3" style="font-size: 14px;" onclick="ahk.ImportCSV(event)">Import CSV</a>
-                </div>
-              </div>
-              <a class="btn btn-secondary btn-sm" onclick="ahk.Help(event)">?</a> -->
-              <a class="btn btn-secondary btn-sm" onclick="getD()">test</a>
+              <!-- <a class="btn btn-secondary btn-sm" onclick="getD()">test</a> -->
             </form>
-            <p class="text-white-50"><small>Note: the program will create a subfolder with the name of the course in the
-                destination directory.</small></p>
+            <!-- <p class="text-white-50"><small>Note:</small></p> -->
             <div id="show-download-progress">
               <small id="download-file-name"></small>
               <p id="download-progress-value" class="mb-0"></p>
               <div id="download-progressbar"></div>
             </div>
-            <!-- <h4 class="h5 mt-4">
-              Download Directory
-            </h4>
-            <ul class="list-group px-0">
-              <li class='list-group-item p-2'>
-                <p id="course-download-dir" class="mb-0"></p>
-              </li>
-            </ul> -->
             <h4 class="h5 mt-4">
               Gallery
               <div class="spinner-border spinner-border-sm text-primary align-middle" role="status" id="loading-spinner" style="display: none;">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">&nbsp;</span>
               </div>
             </h4>
             <ul class="list-group text-right px-0" id="course-list" style="direction: rtl;"></ul>
-            <div class="row px-3" id="images-list"></div>
+            <div class="image-gallery" id="images-list"></div>
             <!-- justify-content-between -->
             <div class="pagination">
-              <a class="btn btn-primary btn-sm mr-1" id="prev-page" onclick="goTo(event)" data-nav="" style="display: none;">◀ Prev</a>
+              <a class="btn btn-primary btn-sm me-1" id="prev-page" onclick="goTo(event)" data-nav="" style="display: none;">◀ Prev</a>
               <a class="btn btn-primary btn-sm" id="next-page" onclick="goTo(event)" data-nav="" style="display: none;">Next ▶</a>
             </div>
 
           </div>
-          <div style='height: 60px;'>&nbsp;</div>
-          <!-- End Main Section -->
         </div>
-        <div style='height: 60px;'>&nbsp;</div>
       </div>
     </div>
-
 
     <input type="text" id="copied" style="opacity: 0;width: 10px;height: 10px;">
     <span class="message" id="message" style="visibility: hidden; opacity: 0;">Copied ✓</span>
 
   </div>
-  <!-- End Window Contents -->
 
-  <!-- 
-  <script src="js/bootstrap.min.js"></script> -->
+  <div class="position-fixed" style="top: 10px; right: 10px;">
+    <a href="https://github.com/yasinc2/watermarkify" target="_blank" class="btn btn-dark rounded-3 border p-2 lh-0" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Github">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"></path>
+      </svg>
+    </a>
+  </div>
+
+  <div class="position-fixed d-flex align-items-center justify-content-center fs-7 text-muted" style="bottom: 10px; right: 10px;">
+    Made with
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-suit-heart-fill mx-1" viewBox="0 0 16 16">
+      <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1"></path>
+    </svg>
+    and
+    <svg fill="currentColor" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve" class="mx-1">
+      <g id="5151e0c8492e5103c096af88a51e7e7e">
+        <path display="inline" d="M218.195,257.521c0,64.719,4.624,119.1-27.309,151.283c-17.961,18.105-46.301,28.772-81.17,28.772
+                c-57.192,0-88.947-27.862-109.215-66.416c19.512-12.459,39.452-24.502,59.775-36.154c8.292,23.188,36.291,49.258,67.888,33.21
+                c20.027-10.18,17.715-41.04,17.715-74.537c0-69.549,0-149.78,0-212.528c-0.063-1.044-0.125-2.087,0.732-2.214
+                c23.866,0,47.728,0,71.585,0C218.195,134.832,218.195,198.069,218.195,257.521z M399.727,215.462
+                c-18.247-7.814-40.928-17.058-46.488-33.952c-6.233-18.934,4.396-34.533,16.231-39.841c26.023-11.688,57.038,7.556,63.463,27.301
+                c19.583-11.657,39.103-23.384,56.826-36.896c-20.826-34.584-51.354-59.342-107.003-57.561
+                c-30.64,0.979-53.657,10.652-70.841,25.088c-16.771,14.085-29.721,33.854-31.737,61.989
+                c-6.025,84.212,56.988,105.708,110.695,129.137c16.93,7.385,35.751,14.842,43.54,29.517c16.061,30.282-12.389,50.26-36.898,52.397
+                c-39.336,3.427-65.858-19.587-81.175-43.54c-19.133,11.86-39.938,22.045-58.298,34.683c25.537,44.908,67.409,73.98,132.831,73.793
+                c66.74-0.188,116.219-32.366,120.281-92.977C516.677,262.216,454.956,239.105,399.727,215.462z">
+        </path>
+      </g>
+    </svg>
+  </div>
+
+  <!-- <script src="js/bootstrap.min.js"></script> -->
   <script src="js/jquery.min.js"></script>
   <script src="js/getDeviations.js"></script>
   <script src="js/lightbox.min.js"></script>
-  <script>
-    function getD() {
-      getDeviations('https://backend.deviantart.com/rss.xml?q=favby:forheksed/61076187&limit=10', null, 0);
-    }
-
-    function processDeviations(deviations, hasPrev, hasNext, prevLink, nextLink) {
-      $("#loading-spinner").hide();
-      for (var i = 0, l = deviations.length; i < l; i++) {
-        // var card = 
-        // '<div class="col-2 p-2">\
-        //   <div class="card">\
-        //     <img src="' + deviations[i].thumbM + '" class="card-img-top" alt="...">\
-        //     <div class="card-body">\
-        //       <h5 class="card-title">' + deviations[i].title + '</h5>\
-        //       <details>\
-        //         <summary>Description</summary>\
-        //         <p class="card-text">' + deviations[i].desc + '</p>\
-        //       </details>\
-        //       <p class="card-text"></p> \
-        //       <a onclick="ahk.OpenLinkInChrome(\'' + encodeURIComponent((deviations[i].image).toString()) + '\')" class="btn btn-primary btn-sm">Open In Chrome</a> \
-        //     </div> \
-        //   </div> \
-        // </div>'
-        // ;
-        var card =
-          '<div class="image-container">\
-            <a class="pr-2 pb-2" href="' + (deviations[i].image != null ? deviations[i].image : "imgs/no-content.png") + '" data-lightbox="gallery" data-title="' + deviations[i].title + '">\
-              <img src="' + deviations[i].thumbM + '" class="" alt="' + deviations[i].title + '">\
-            </a>\
-            <button class="copy-link-btn" onclick="copy(event)" data-link="' + deviations[i].link + '">Copy Link</button>\
-          </div>\
-            ';
-        // $("#images-list").append('<div class="col-3"><img src="' + deviations[i].thumbS + '" alt=""></div>');
-        $("#images-list").append(card);
-        // console.log(deviations[i].thumbS);
-        // console.log(deviations[i].thumbL);
-        // console.log(deviations[i].image);
-      }
-
-      if (hasPrev == true) {
-        $("#prev-page").show();
-        $("#prev-page").data("nav", prevLink);
-        console.log(prevLink);
-      } else {
-        $("#prev-page").hide();
-        $("#prev-page").data("nav", "");
-      }
-
-      if (hasNext == true) {
-        $("#next-page").show();
-        $("#next-page").data("nav", nextLink);
-        console.log(nextLink);
-      } else {
-        $("#next-page").hide();
-        $("#next-page").data("nav", "");
-      }
-    }
-
-    function Search(event) {
-      // console.log(event);
-      if (event != undefined && event.target.id == "search-form") {
-        event.preventDefault();
-      }
-
-      $("#images-list").text("");
-      $("#loading-spinner").show();
-      var searchTerm = $("#search-input").val();
-      var searchLimit = $("#search-limit").val();
-      var searchType = $('[name="searchType"]:checked')[0].id;
-      var query = "";
-      // console.log(searchLimit);
-
-      if (searchTerm != "") {
-        // console.log("OK");
-        // console.log(searchType);
-        if (searchType == "searchByTerm") {
-          query = "q=" + searchTerm;
-        } else if (searchType == "searchByName") {
-          query = "q=by:" + searchTerm;
-        } else if (searchType == "searchByGallery") {
-          query = "q=gallery:" + searchTerm;
-        } else if (searchType == "searchByFavsby") {
-          query = "q=favby:" + searchTerm;
-        } else if (searchType == "searchByCategory") {
-          query = "q=in:" + searchTerm;
-        }
-
-        var rssUrl = 'https://backend.deviantart.com/rss.xml?' + query + "&limit=" + searchLimit;
-        getDeviations(rssUrl, null, 0);
-      } else {
-        console.log("Search field is empty!");
-        alert("Search field is empty!");
-      }
-
-      return false;
-    }
-
-    function goTo(event) {
-      // console.log($(event.target).data("nav"));
-      $("#images-list").text("");
-      $("#loading-spinner").show();
-      getDeviations($(event.target).data("nav"), null, 0);
-    }
-
-    function copy(e) {
-      e = e || window.event;
-      var target = e.target || e.srcElement;
-
-      // console.log(e, target.dataset["link"]);
-      var text = target.dataset["link"];
-      console.log(text);
-      // text = text.replace(/\s+/g, ''); /* remove whitespace */
-      document.getElementById('copied').value = text;
-
-      var copyText = document.getElementById("copied");
-      copyText.select();
-      copyText.setSelectionRange(0, 99999)
-      document.execCommand("copy");
-      document.getElementById('message').style = "visibility: visible;opacity: 1";
-      console.log(document.getElementById('copied').value);
-      setTimeout(function () {
-        document.getElementById('copied').value = null;
-      }, 100);
-      setTimeout(function () {
-        document.getElementById('message').style = "visibility: hidden;opacity: 0";
-      }, 1500);
-    }
-  </script>
+  <script src="js/script.js"></script>
 </body>
 
 </html>

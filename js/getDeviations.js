@@ -9,70 +9,84 @@ function getDeviations(url, limit, start) {
     xhr.send();
 
     xhr.onload = function () {
-        let json1 = xml2json(new DOMParser().parseFromString(xhr.response, 'text/xml'));
-        let json2 = JSON.parse('{' + json1.slice(11));
-        let items = json2.rss.channel.item;
-        let pagination = json2.rss.channel["atom:link"];
-        let hasPrev = null;
-        let hasNext = null;
-        let prevLink = null;
-        let nextLink = null;
-        console.log(pagination);
-        let tempPageCheck = (!!pagination[1] ? pagination[1]['@rel'] : null);
-        if (tempPageCheck == null) {
-            hasNext = false;
-            hasPrev = false;
-        } else if (tempPageCheck == "next") {
-            hasNext = true;
-            hasPrev = false;
-            nextLink = pagination[1]['@href'];
-        } else if (tempPageCheck == "previous") {
-            hasNext = true;
-            hasPrev = true;
-            prevLink = pagination[1]['@href'];
-            nextLink = pagination[2]['@href'];
-        }
-
-        console.log(json2);
-        console.log(hasPrev, hasNext);
-
         try {
-            if (items != undefined && items != "") {
-                for (var i = 0, l = items.length; i < l; i++) {
-                    if (i < start) {
-                        continue;
-                    }
-                    if (!!limit && i == start + limit) break;
-
-                    var object = {};
-
-                    object.title = items[i].title;
-                    object.link = items[i].link;
-                    object.date = items[i].pubDate;
-                    object.desc = items[i]['media:description']['#text'];
-                    object.thumbS = (!!items[i]['media:thumbnail'] ? items[i]['media:thumbnail'][0]['@url'] : null);
-                    object.thumbL = (!!items[i]['media:thumbnail'] ? items[i]['media:thumbnail'][1]['@url'] : null);
-                    object.thumbM = (!!items[i]['media:thumbnail'] ? items[i]['media:thumbnail'][2]['@url'] : null);
-                    object.image = (!!items[i]['media:content'] ? items[i]['media:content']['@url'] : null);
-                    object.rating = items[i]['media:rating'];
-                    object.category = items[i]['media:category']['#text'];
-                    object.categoryUrl = 'https://www.deviantart.com/' + object.category;
-                    object.deviantName = items[i]['media:credit'][0]['#text'];
-                    object.deviantAvatar = items[i]['media:credit'][1]['#text'];
-                    object.deviantUrl = items[i]['media:copyright']['@url'];
-                    object.copyright = items[i]['media:copyright']['#text'];
-
-                    deviations.push(object);
+            let json1 = xml2json(new DOMParser().parseFromString(xhr.response, 'text/xml'));
+            try {
+                let json2 = JSON.parse('{' + json1.slice(11));
+                let items = json2.rss.channel.item;
+                let pagination = json2.rss.channel["atom:link"];
+                let hasPrev = null;
+                let hasNext = null;
+                let prevLink = null;
+                let nextLink = null;
+                console.log(pagination);
+                let tempPageCheck = (!!pagination[1] ? pagination[1]['@rel'] : null);
+                if (tempPageCheck == null) {
+                    hasNext = false;
+                    hasPrev = false;
+                } else if (tempPageCheck == "next") {
+                    hasNext = true;
+                    hasPrev = false;
+                    nextLink = pagination[1]['@href'];
+                } else if (tempPageCheck == "previous") {
+                    hasNext = true;
+                    hasPrev = true;
+                    prevLink = pagination[1]['@href'];
+                    nextLink = pagination[2]['@href'];
                 }
-            } else {
-                alert("No items were found with the search term and selected filter.");
+
+                console.log(json2);
+                console.log(hasPrev, hasNext);
+
+
+                try {
+                    if (items != undefined && items != "") {
+                        for (var i = 0, l = items.length; i < l; i++) {
+                            if (i < start) {
+                                continue;
+                            }
+                            if (!!limit && i == start + limit) break;
+
+                            var object = {};
+
+                            object.title = items[i].title;
+                            object.link = items[i].link;
+                            object.date = items[i].pubDate;
+                            object.desc = items[i]['media:description']?.['#text'];
+                            object.thumbS = items[i]['media:thumbnail']?.[0]?.['@url'];
+                            object.thumbL = items[i]['media:thumbnail']?.[1]?.['@url'];
+                            object.thumbM = items[i]['media:thumbnail']?.[2]?.['@url'];
+                            object.image = items[i]['media:content']?.['@url'];
+                            object.rating = items[i]['media:rating'];
+                            object.category = items[i]['media:category']?.['#text'];
+                            object.categoryUrl = 'https://www.deviantart.com/' + (items[i]['media:category']?.['#text'] || '');
+                            object.deviantName = items[i]['media:credit']?.[0]?.['#text'];
+                            object.deviantAvatar = items[i]['media:credit']?.[1]?.['#text'];
+                            object.deviantUrl = items[i]['media:copyright']?.['@url'];
+                            object.copyright = items[i]['media:copyright']?.['#text'];
+
+                            deviations.push(object);
+                        }
+                    } else {
+                        alert("No items were found with the search term and selected filter.");
+                    }
+                    
+                    // async function is complete, move on
+                    processDeviations(deviations, hasPrev, hasNext, prevLink, nextLink);
+                } catch (error) {
+                    console.log(error);
+                    alert("Error")
+                }
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+                alert("Error parsing JSON")
+                // handle error or return an error response
             }
         } catch (error) {
-            console.log(error);
-            alert("Error")
+            console.error('Error parsing XML:', error);
+            alert("Error parsing XML")
+            // handle error or return an error response
         }
-        // async function is complete, move on
-        processDeviations(deviations, hasPrev, hasNext, prevLink, nextLink);
     };
 }
 
