@@ -10,6 +10,7 @@
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/lightbox.min.css">
+  <link rel="stylesheet" href="css/hint.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -47,35 +48,37 @@
               </div>
               <div class="mt-2 mb-3">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="searchType" id="searchByTerm" checked>
+                  <input class="form-check-input" type="radio" name="searchType" id="searchByTerm" data-placeholder="Search term... (for example: cat)" checked>
                   <label class="form-check-label" for="searchByTerm">
                     by term
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="searchType" id="searchByName">
+                  <input class="form-check-input" type="radio" name="searchType" id="searchByName" data-placeholder="Search deviant name... (for example: sky-burial)">
                   <label class="form-check-label" for="searchByName">
                     by name
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="searchType" id="searchByGallery">
+                  <!-- search for deviant name or deviant name plus gallery id.  -->
+                  <input class="form-check-input" type="radio" name="searchType" id="searchByGallery" data-placeholder="Search gallery of a deviant... (for example: sky-burial OR sky-burial/56691652. see help for more info.)">
                   <label class="form-check-label" for="searchByGallery">
                     by gallery
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="searchType" id="searchByFavsby">
+                  <!-- search for deviant name or deviant name plus favourites id.  -->
+                  <input class="form-check-input" type="radio" name="searchType" id="searchByFavsby" data-placeholder="Search favourites of a deviant... (for example: forheksed OR forheksed/61468717. see help for more info.)">
                   <label class="form-check-label" for="searchByFavsby">
                     by favourites
                   </label>
                 </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="searchType" id="searchByCategory">
+                <!-- <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="searchType" id="searchByCategory" data-placeholder="Search Term... (for example: cat)">
                   <label class="form-check-label" for="searchByCategory">
                     by category
                   </label>
-                </div>
+                </div> -->
               </div>
               <a class="btn btn-primary btn-sm" onclick="Search()">Search</a>
               <!-- <a class="btn btn-secondary btn-sm" onclick="getD()">test</a> -->
@@ -111,7 +114,7 @@
   </div>
 
   <div class="position-fixed" style="top: 10px; right: 10px;">
-    <a href="https://github.com/yasinc2/watermarkify" target="_blank" class="btn btn-dark rounded-3 border p-2 lh-0" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Github">
+    <a href="https://github.com/YasinC2/Deviantart-Gallery-Downloader" target="_blank" class="btn btn-dark rounded-3 border p-2 lh-0" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Github">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
         <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"></path>
       </svg>

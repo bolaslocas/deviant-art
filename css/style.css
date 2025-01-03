@@ -39,10 +39,11 @@ progress {
     border: 0;
     color: #fff;
     font-size: 12px;
-    padding: 1px 5px;
+    padding: 5px;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 5px;
     text-decoration: none;
+    line-height: 0;
 }
 
 .copy-link-btn:hover {
