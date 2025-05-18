@@ -11,164 +11,62 @@ function getDeviations(url, limit, start) {
     xhr.onload = function () {
         try {
             let json1 = xml2json(new DOMParser().parseFromString(xhr.response, 'text/xml'));
-            try {
-                let json2 = JSON.parse('{' + json1.slice(11));
-                let items = json2.rss.channel.item;
-                let pagination = json2.rss.channel["atom:link"];
-                let hasPrev = null;
-                let hasNext = null;
-                let prevLink = null;
-                let nextLink = null;
-                console.log(pagination);
-                let tempPageCheck = (!!pagination[1] ? pagination[1]['@rel'] : null);
-                if (tempPageCheck == null) {
-                    hasNext = false;
-                    hasPrev = false;
-                } else if (tempPageCheck == "next") {
-                    hasNext = true;
-                    hasPrev = false;
-                    nextLink = pagination[1]['@href'];
-                } else if (tempPageCheck == "previous") {
-                    hasNext = true;
-                    hasPrev = true;
-                    prevLink = pagination[1]['@href'];
-                    nextLink = pagination[2]['@href'];
+            let json2 = JSON.parse('{' + json1.slice(11));
+            let items = json2.rss.channel.item;
+
+            let pagination = json2.rss.channel["atom:link"];
+            let hasPrev = false, hasNext = false;
+            let prevLink = null, nextLink = null;
+
+            if (pagination?.length) {
+                for (let p of pagination) {
+                    if (p['@rel'] === "next") nextLink = p['@href'], hasNext = true;
+                    if (p['@rel'] === "previous") prevLink = p['@href'], hasPrev = true;
                 }
-
-                console.log(json2);
-                console.log(hasPrev, hasNext);
-
-
-                try {
-                    if (items != undefined && items != "") {
-                        for (var i = 0, l = items.length; i < l; i++) {
-                            if (i < start) {
-                                continue;
-                            }
-                            if (!!limit && i == start + limit) break;
-
-                            var object = {};
-
-                            object.title = items[i].title;
-                            object.link = items[i].link;
-                            object.date = items[i].pubDate;
-                            object.desc = items[i]['media:description']?.['#text'];
-                            object.thumbS = items[i]['media:thumbnail']?.[0]?.['@url'];
-                            object.thumbL = items[i]['media:thumbnail']?.[1]?.['@url'];
-                            object.thumbM = items[i]['media:thumbnail']?.[2]?.['@url'];
-                            object.image = items[i]['media:content']?.['@url'];
-                            object.rating = items[i]['media:rating'];
-                            object.category = items[i]['media:category']?.['#text'];
-                            object.categoryUrl = 'https://www.deviantart.com/' + (items[i]['media:category']?.['#text'] || '');
-                            object.deviantName = items[i]['media:credit']?.[0]?.['#text'];
-                            object.deviantAvatar = items[i]['media:credit']?.[1]?.['#text'];
-                            object.deviantUrl = items[i]['media:copyright']?.['@url'];
-                            object.copyright = items[i]['media:copyright']?.['#text'];
-
-                            deviations.push(object);
-                        }
-                    } else {
-                        alert("No items were found with the search term and selected filter.");
-                    }
-                    
-                    // async function is complete, move on
-                    processDeviations(deviations, hasPrev, hasNext, prevLink, nextLink);
-                } catch (error) {
-                    console.log(error);
-                    alert("Error")
-                }
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-                alert("Error parsing JSON")
-                // handle error or return an error response
             }
-        } catch (error) {
-            console.error('Error parsing XML:', error);
-            alert("Error parsing XML")
-            // handle error or return an error response
-        }
-    };
-}
 
-/*  This work is licensed under Creative Commons GNU LGPL License.
-    License: http://creativecommons.org/licenses/LGPL/2.1/
-    Version: 0.9
-    Author:  Stefan Goessner/2006
-    Web:     http://goessner.net/ 
-*/
-function xml2json(e, n) {
-    var t = {
-        toObj: function (e) {
-            var n = {};
-            if (1 == e.nodeType) {
-                if (e.attributes.length)
-                    for (var i = 0; i < e.attributes.length; i++) n["@" + e.attributes[i].nodeName] = (e.attributes[i].nodeValue || "").toString();
-                if (e.firstChild) {
-                    for (var r = 0, o = 0, l = !1, a = e.firstChild; a; a = a.nextSibling) 1 == a.nodeType ? l = !0 : 3 == a.nodeType && a.nodeValue.match(/[^ \f\n\r\t\v]/) ? r++ : 4 == a.nodeType && o++;
-                    if (l)
-                        if (r < 2 && o < 2) {
-                            t.removeWhite(e);
-                            for (a = e.firstChild; a; a = a.nextSibling) 3 == a.nodeType ? n["#text"] = t.escape(a.nodeValue) : 4 == a.nodeType ? n["#cdata"] = t.escape(a.nodeValue) : n[a.nodeName] ? n[a.nodeName] instanceof Array ? n[a.nodeName][n[a.nodeName].length] = t.toObj(a) : n[a.nodeName] = [n[a.nodeName], t.toObj(a)] : n[a.nodeName] = t.toObj(a)
-                        } else e.attributes.length ? n["#text"] = t.escape(t.innerXml(e)) : n = t.escape(t.innerXml(e));
-                    else if (r) e.attributes.length ? n["#text"] = t.escape(t.innerXml(e)) : n = t.escape(t.innerXml(e));
-                    else if (o)
-                        if (o > 1) n = t.escape(t.innerXml(e));
-                        else
-                            for (a = e.firstChild; a; a = a.nextSibling) n["#cdata"] = t.escape(a.nodeValue)
+            if (items) {
+                for (let i = 0, l = items.length; i < l; i++) {
+                    if (i < start) continue;
+                    if (limit && i >= start + limit) break;
+
+                    let item = items[i];
+                    let category = item['media:category']?.['#text'] || 'all';
+
+                    // Filtrar solo los de la categoría 'all'
+                    if (category.toLowerCase() !== 'all') continue;
+
+                    // Solo si hay imagen de alta resolución
+                    let imageUrl = item['media:content']?.['@url'];
+                    if (!imageUrl || !imageUrl.includes('orig')) continue;
+
+                    let deviation = {
+                        title: item.title,
+                        link: item.link,
+                        date: item.pubDate,
+                        desc: item['media:description']?.['#text'],
+                        thumbS: item['media:thumbnail']?.[0]?.['@url'],
+                        thumbM: item['media:thumbnail']?.[1]?.['@url'],
+                        thumbL: item['media:thumbnail']?.[2]?.['@url'],
+                        image: imageUrl,
+                        download: imageUrl,
+                        rating: item['media:rating'],
+                        category: category,
+                        categoryUrl: 'https://www.deviantart.com/' + category,
+                        deviantName: item['media:credit']?.[0]?.['#text'],
+                        deviantAvatar: item['media:credit']?.[1]?.['#text'],
+                        deviantUrl: item['media:copyright']?.['@url'],
+                        copyright: item['media:copyright']?.['#text']
+                    };
+
+                    deviations.push(deviation);
                 }
-                e.attributes.length || e.firstChild || (n = null)
-            } else 9 == e.nodeType ? n = t.toObj(e.documentElement) : alert("unhandled node type: " + e.nodeType);
-            return n
-        },
-        toJson: function (e, n, i) {
-            var r = n ? '"' + n + '"' : "";
-            if (e instanceof Array) {
-                for (var o = 0, l = e.length; o < l; o++) e[o] = t.toJson(e[o], "", i + "\t");
-                r += (n ? ":[" : "[") + (e.length > 1 ? "\n" + i + "\t" + e.join(",\n" + i + "\t") + "\n" + i : e.join("")) + "]"
-            } else if (null == e) r += (n && ":") + "null";
-            else if ("object" == typeof e) {
-                var a = [];
-                for (var d in e) a[a.length] = t.toJson(e[d], d, i + "\t");
-                r += (n ? ":{" : "{") + (a.length > 1 ? "\n" + i + "\t" + a.join(",\n" + i + "\t") + "\n" + i : a.join("")) + "}"
-            } else r += "string" == typeof e ? (n && ":") + '"' + e.toString() + '"' : (n && ":") + e.toString();
-            return r
-        },
-        innerXml: function (e) {
-            var n = "";
-            if ("innerHTML" in e) n = e.innerHTML;
-            else
-                for (var t = function (e) {
-                        var n = "";
-                        if (1 == e.nodeType) {
-                            n += "<" + e.nodeName;
-                            for (var i = 0; i < e.attributes.length; i++) n += " " + e.attributes[i].nodeName + '="' + (e.attributes[i].nodeValue || "").toString() + '"';
-                            if (e.firstChild) {
-                                n += ">";
-                                for (var r = e.firstChild; r; r = r.nextSibling) n += t(r);
-                                n += "</" + e.nodeName + ">"
-                            } else n += "/>"
-                        } else 3 == e.nodeType ? n += e.nodeValue : 4 == e.nodeType && (n += "<![CDATA[" + e.nodeValue + "]]>");
-                        return n
-                    }, i = e.firstChild; i; i = i.nextSibling) n += t(i);
-            return n
-        },
-        escape: function (e) {
-            return e.replace(/[\\]/g, "\\\\").replace(/[\"]/g, '\\"').replace(/[\n]/g, "\\n").replace(/[\r]/g, "\\r")
-        },
-        removeWhite: function (e) {
-            e.normalize();
-            for (var n = e.firstChild; n;)
-                if (3 == n.nodeType)
-                    if (n.nodeValue.match(/[^ \f\n\r\t\v]/)) n = n.nextSibling;
-                    else {
-                        var i = n.nextSibling;
-                        e.removeChild(n), n = i
-                    }
-            else 1 == n.nodeType ? (t.removeWhite(n), n = n.nextSibling) : n = n.nextSibling;
-            return e
+            }
+
+            processDeviations(deviations, hasPrev, hasNext, prevLink, nextLink);
+        } catch (error) {
+            console.error('Parsing error:', error);
+            alert("Error processing DeviantArt feed.");
         }
     };
-    9 == e.nodeType && (e = e.documentElement);
-    var i = t.toJson(t.toObj(t.removeWhite(e)), e.nodeName, "\t");
-    return "{\n" + n + (n ? i.replace(/\t/g, n) : i.replace(/\t|\n/g, "")) + "\n}"
 }
