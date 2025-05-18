@@ -1,6 +1,6 @@
 function getDeviations(url, limit, start) {
     var deviations = [];
-    var url = url || 'https://backend.deviantart.com/rss.xml?q=gallery:fu51on/27123391';
+    var url = url || 'https://backend.deviantart.com/rss.xml?q=gallery:dark-necrodevourer';
     var limit = limit || null;
     var start = start || 0;
 
